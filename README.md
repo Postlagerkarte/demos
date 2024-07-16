@@ -1,3 +1,4 @@
 # demos
 ## demo1
-https://htmlpreview.github.io/?https://github.com/Postlagerkarte/demos/blob/main/demo1.html
+a: https://htmlpreview.github.io/?https://github.com/Postlagerkarte/demos/blob/main/demo1.html
+b: https://htmlpreview.github.io/?https://github.com/Postlagerkarte/demos/blob/main/demo1_b.html
