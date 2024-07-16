@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Demo Scene Tribute</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+<canvas id="demoCanvas"></canvas>
+<script>
+const canvas = document.getElementById('demoCanvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Scrolling text
+let scrollText = "This is some scrolling text, filled in by the gods from the ether, why do you care? Read or die!";
+let scrollX = canvas.width;
+
+// Spinning cube
+let angle = 0;
+const cubeSize = 100;
+
+// Particles
+const particles = [];
+const particleCount = 100;
+
+// Plasma
+const plasmaSize = 256;
+const plasma = new Array(plasmaSize * plasmaSize);
+
+// Initialize particles
+for (let i = 0; i < particleCount; i++) {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 3 + 1,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+        vx: Math.random() * 2 - 1,
+        vy: Math.random() * 2 - 1
+    });
+}
+
+// Generate plasma
+for (let y = 0; y < plasmaSize; y++) {
+    for (let x = 0; x < plasmaSize; x++) {
+        let value = Math.sin(x / 16.0) + Math.sin(y / 8.0) + Math.sin((x + y) / 16.0) + Math.sin(Math.sqrt(x*x + y*y) / 8.0);
+        value = (value + 4) * 32;
+        plasma[y * plasmaSize + x] = value;
+    }
+}
+
+function drawScrollingText() {
+    ctx.font = "30px Arial";
+    ctx.fillStyle = "#fff";
+    ctx.fillText(scrollText, scrollX, canvas.height - 40);
+    scrollX -= 2;
+    if (scrollX < -ctx.measureText(scrollText).width) {
+        scrollX = canvas.width;
+    }
+}
+
+function drawSpinningCube() {
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate(angle);
+    ctx.strokeStyle = "#0f0";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.rect(-cubeSize / 2, -cubeSize / 2, cubeSize, cubeSize);
+    ctx.stroke();
+    ctx.restore();
+    angle += 0.02;
+}
+
+function updateParticles() {
+    particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+    });
+}
+
+function drawParticles() {
+    particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+    });
+}
+
+function drawPlasma(time) {
+    const imageData = ctx.createImageData(plasmaSize, plasmaSize);
+    const data = imageData.data;
+
+    for (let y = 0; y < plasmaSize; y++) {
+        for (let x = 0; x < plasmaSize; x++) {
+            const i = y * plasmaSize + x;
+            const value = plasma[i];
+            const c = Math.sin(value * 0.0625 + time) * 128 + 128;
+            data[i * 4 + 0] = c;
+            data[i * 4 + 1] = (c + 64) % 256;
+            data[i * 4 + 2] = (c + 128) % 256;
+            data[i * 4 + 3] = 255;
+        }
+    }
+
+    ctx.putImageData(imageData, canvas.width - plasmaSize, 0);
+}
+
+let lastTime = 0;
+function animate(time) {
+    const deltaTime = time - lastTime;
+    lastTime = time;
+
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    drawPlasma(time * 0.001);
+    drawSpinningCube();
+    updateParticles();
+    drawParticles();
+    drawScrollingText();
+
+    requestAnimationFrame(animate);
+}
+
+animate(0);
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+</script>
+</body>
+</html>
