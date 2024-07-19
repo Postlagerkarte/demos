@@ -7,4 +7,5 @@ b: https://htmlpreview.github.io/?https://github.com/Postlagerkarte/demos/blob/m
 ## demo2
 
 a: https://htmlpreview.github.io/?https://github.com/Postlagerkarte/demos/blob/main/demo2.html
-b:  https://htmlpreview.github.io/?https://github.com/Postlagerkarte/demos/blob/main/demo2_b.html
+
+b: https://htmlpreview.github.io/?https://github.com/Postlagerkarte/demos/blob/main/demo2_b.html
